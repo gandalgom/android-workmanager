@@ -22,6 +22,8 @@ class BlurWorker(context: Context, params: WorkerParameters) : Worker(context, p
 
         makeStatusNotification("Blurring image", appContext)
 
+        sleep()
+
         return try {
             if (TextUtils.isEmpty(resourceUri)) {
                 Log.e(TAG, "Invalid input uri")
@@ -43,6 +45,7 @@ class BlurWorker(context: Context, params: WorkerParameters) : Worker(context, p
             Result.success(outputData)
         } catch (throwable: Throwable) {
             Log.e(TAG, "Error applying blur")
+            throwable.printStackTrace()
             Result.failure()
         }
     }
