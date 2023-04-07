@@ -1,11 +1,11 @@
 package com.gandalgom.sample.workmanager
 
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 
 import com.gandalgom.sample.workmanager.databinding.ActivityBlurBinding
 
@@ -25,13 +25,28 @@ class BlurActivity : AppCompatActivity() {
                 else -> 1
             }
 
-    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBlurBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.goButton.setOnClickListener { blurViewModel.applyBlur(blurLevel) }
+
+        // Observe work status, added in onCreate()
+        blurViewModel.outputWorkInfoList.observe(this, workInfoListObserver())
+    }
+
+    private fun workInfoListObserver(): Observer<List<WorkInfo>> {
+        return Observer { workInfoList ->
+            if (workInfoList.isEmpty()) {
+                return@Observer
+            }
+            if (workInfoList[0].state.isFinished) {
+                showWorkFinished()
+            } else {
+                showWorkInProgress()
+            }
+        }
     }
 
     /**
