@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
+
 import com.gandalgom.sample.workmanager.databinding.ActivityBlurBinding
 
 class BlurActivity : AppCompatActivity() {
@@ -40,6 +41,8 @@ class BlurActivity : AppCompatActivity() {
                 }
             }
         }
+
+        binding.cancelButton.setOnClickListener { blurViewModel.cancelWork() }
 
         // Observe work status, added in onCreate()
         blurViewModel.outputWorkInfoList.observe(this, workInfoListObserver())

@@ -20,7 +20,7 @@ import com.gandalgom.sample.workmanager.workers.SaveImageToFileWorker
 
 class BlurViewModel(application: Application) : ViewModel() {
 
-    internal var imageUri: Uri? = null
+    private var imageUri: Uri? = null
     internal var outputUri: Uri? = null
 
     // New instance variable for the WorkInfo
@@ -65,6 +65,10 @@ class BlurViewModel(application: Application) : ViewModel() {
 
         // Actually start the work
         continuation.enqueue()
+    }
+
+    internal fun cancelWork() {
+        workManager.cancelUniqueWork(IMAGE_MANIPULATION_WORK_NAME)
     }
 
     private fun uriOrNull(uriString: String?): Uri? {
