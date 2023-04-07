@@ -20,8 +20,8 @@ import com.gandalgom.sample.workmanager.workers.SaveImageToFileWorker
 
 class BlurViewModel(application: Application) : ViewModel() {
 
-    private var imageUri: Uri? = null
-    private var outputUri: Uri? = null
+    internal var imageUri: Uri? = null
+    internal var outputUri: Uri? = null
 
     // New instance variable for the WorkInfo
     internal val outputWorkInfoList: LiveData<List<WorkInfo>>

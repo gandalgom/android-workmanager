@@ -1,12 +1,12 @@
 package com.gandalgom.sample.workmanager
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
-
 import com.gandalgom.sample.workmanager.databinding.ActivityBlurBinding
 
 class BlurActivity : AppCompatActivity() {
@@ -32,6 +32,15 @@ class BlurActivity : AppCompatActivity() {
 
         binding.goButton.setOnClickListener { blurViewModel.applyBlur(blurLevel) }
 
+        binding.seeFileButton.setOnClickListener {
+            blurViewModel.outputUri?.let { currentUri ->
+                val actionView = Intent(Intent.ACTION_VIEW, currentUri)
+                actionView.resolveActivity(packageManager)?.run {
+                    startActivity(actionView)
+                }
+            }
+        }
+
         // Observe work status, added in onCreate()
         blurViewModel.outputWorkInfoList.observe(this, workInfoListObserver())
     }
@@ -41,8 +50,18 @@ class BlurActivity : AppCompatActivity() {
             if (workInfoList.isEmpty()) {
                 return@Observer
             }
-            if (workInfoList[0].state.isFinished) {
+            val workInfo = workInfoList[0]
+            if (workInfo.state.isFinished) {
                 showWorkFinished()
+                // Normally this processing, which is not directly related to drawing views on
+                // screen would be in the ViewModel. For simplicity we are keeping it here.
+                val outputImageUri = workInfo.outputData.getString(KEY_IMAGE_URI)
+
+                // If there is an output file show "See File" button
+                if (!outputImageUri.isNullOrEmpty()) {
+                    blurViewModel.setOutputUri(outputImageUri)
+                    binding.seeFileButton.visibility = View.VISIBLE
+                }
             } else {
                 showWorkInProgress()
             }
